@@ -1,0 +1,173 @@
+% Defined in the order -> (Color  Race  Candy  Pet  Drink)
+
+((puzzle X)
+	(member (Red English _ _ _) X)
+	(member (_ Spaniard _ _ _) X)
+	(eq X ((_ Norwegian _ _ _) _ _ _ _))
+	(left (Ivory _ _ _ _) (Green _ _ _ _) X)
+	(next (_ _ Hersheys _ _) (_ _ _ Fox _) X)
+	(member (Yellow _ KitKats _ _) X)
+	(next (_ Norwegian _ _ _) (Blue _ _ _ _) X)
+	(member (_ _ Smarties Snails _) X)
+	(member (_ _ Snickers _ OrangeJuice) X)
+	(member (_ Ukranian _ _ Tea) X)
+	(member (_ Japanese MilkyWays _ _) X)
+	(next (_ _ KitKats _ _) (_ _ _ Horse _) X)
+	(member (Green _ _ _ Coffee) X)
+	(eq X (_ _ (_ _ _ _ Milk) _ _)))
+
+% ------------------------Defining condition for 'LEFT'------------------------- %
+
+((left X Y (X Y _ _ _)))
+((left X Y (_ X Y _ _)))
+((left X Y (_ _ X Y _)))
+((left X Y (_ _ _ X Y)))
+
+% ------------------------Defining condition for 'NEXT'------------------------- %
+
+((next X Y Z)(left X Y Z))
+((next X Y Z)(left Y X Z))
+
+% -----------------Defining how a feature is a member of a set-------------------%
+
+((member X (X _ _ _ _) ))
+((member X (_ X _ _ _) ))
+((member X (_ _ X _ _) ))
+((member X (_ _ _ X _) ))
+((member X (_ _ _ _ X) ))
+
+
+%---- ---------------------Solving all the X equations-------------------------- %
+
+?((puzzle X)(addcl ((solutions X))))
+
+
+% --------------Defining solutions for relations that are not in KB--------------%
+
+/*What color is the house in which the Norwegian lives?*/
+((house-norwegian)
+	(solutions X)
+	(member (Y Norwegian _ _ _) X)
+	(p "The Norwegian lives in the "Y" house.")
+	(pp)
+	(fail))
+((house-norwegian)
+	(solutions X)
+	(negg member (Y Norwegian _ _ _) X)
+	(pp "There is no house with a Norwegian."(pp))
+	(fail))
+
+
+/*What color is the house in which the zebra lives? */
+((house-zebra)
+	(solutions X)
+	(member (Z _ _ Zebra _) X)
+	(p "The " Z " house may have a Zebra.")(pp)
+	(fail))
+((house-zebra)
+	(solutions X)
+	(negg member (Z _ _ Zebra _) X)
+	(pp "No house can have a Zebra.")
+	(fail))
+
+
+/*In which house is wine drank?*/
+((wine)
+	(solutions X)
+	(member (Y _ _ _ Wine) X)
+	(p "The wine may be drunk in the " Y " house.")(pp)
+	(fail))
+((wine)
+	(solutions X)
+	(negg member (Y _ _ _ Wine) H)
+	(p "None drinks wine.")(pp)
+	(fail))
+
+
+/*In which house are Smarties eaten and orange juice drank?*/
+((smarties-orangejuice)
+	(solutions X)
+	(member (Y Z Smarties _ OrangeJuice) X)
+	(p "The " Z " in the " Y " house may eat smarties and drink orange 	juice.")(pp)
+	(fail))
+((smarties-orangejuice)
+	(solutions X)
+	(negg member (Y Z Smarties _ OrangeJuice) X)
+	(pp "Nobody has both smarties and orange juice.")(pp)
+	(fail))
+
+
+/*What color is the fifth house (last house on the right)?*/
+((color-lasthouse)
+	(solutions (_ _ _ _ (COLOR _ _ _ _)))
+	(p "The color of the last house is " COLOR.)(pp))
+
+
+/*Who drinks what?*/
+((who-drinks-what)
+	(solutions X)
+	(list-drinks-what X))
+((list-drinks-what ((_ Y _ _ Z)))
+	(p "The " Y " drinks " Z.)
+	(pp))
+((list-drinks-what (X|T))
+	(list-drinks-what (X))
+	(list-drinks-what T))
+
+
+%------------------------Queries for AI model created--------------------------%
+
+
+?((pp """""""""********** Assignment 2 - Jegadeesh, Kola, Mateen, Surapaneni *********") (pp))
+
+
+?((pp "1. What color is the house in which the Norwegian lives?"))
+?((p)(house-norwegian))
+?((pp """2. What color is the house in which the zebra lives?"))
+?((p)(house-zebra))
+?((pp """3. In which house is wine drank?"))
+?((p)(wine))
+?((pp """4. In which house are Smarties eaten and orange juice drank?"))
+?((p)(smarties-orangejuice))
+?((pp "5. What color is the fifth house (last house on the right)?"))
+?((p)(color-lasthouse))
+?((pp """6. Who drinks what?"))
+?((pp)(who-drinks-what))
+
+?((pp """""***********************        Thank You        ************************") (pp))
+
+%--------------------------------The result--------------------------------------%
+
+
+/* 
+********** Assignment 2 - Jegadeesh, Kola, Mateen, Surapaneni *********
+
+1. What color is the house in which the Norwegian lives?
+ The Norwegian lives in the  Yellow  house.
+
+2. What color is the house in which the zebra lives?
+ The  Yellow  house may have a Zebra.
+The  Ivory  house may have a Zebra.
+
+3. In which house is wine drank?
+ The wine may be drunk in the  Yellow  house.
+
+4. In which house are Smarties eaten and orange juice drank?
+ Nobody has both smarties and orange juice.
+
+5. What color is the fifth house (last house on the right)?
+ The color of the last house is  Green .
+
+6. Who drinks what?
+
+The  Norwegian  drinks  _22 .
+The  Spaniard  drinks  OrangeJuice .
+The  English  drinks  Milk .
+The  Ukranian  drinks  Tea .
+The  Japanese  drinks  Coffee .
+
+
+***********************        Thank You        ************************
+*/
+
+
